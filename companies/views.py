@@ -36,7 +36,7 @@ class RecruitmentViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-
+    # todo 회사 정보 가져오는 action 추가 하기
     @action(detail=True, methods=['get'])
     def company_recruitments(self, request, pk=None):
         obj = self.get_object()
