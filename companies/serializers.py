@@ -14,10 +14,6 @@ class CompanySerializer(serializers.ModelSerializer):
             'scale'
         )
 
-    def validate(self, attrs):
-        attrs.pop('name')
-        return attrs
-
 
 class CompanyNameSerializer(serializers.Serializer):
     name = serializers.CharField(source='company__name')
@@ -27,7 +23,7 @@ class CompanyNameSerializer(serializers.Serializer):
 class RecruitmentSerializer(serializers.ModelSerializer):
     company_name = serializers.CharField(source='company.name', read_only=True)
     company_desc = serializers.CharField(source='company.description', read_only=True)
-    recruitment_ids = serializers.ListSerializer(child=serializers.IntegerField())
+    recruitment_ids = serializers.ListSerializer(child=serializers.IntegerField(), read_only=True)
 
     class Meta:
         model = Recruitment
