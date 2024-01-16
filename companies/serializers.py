@@ -19,6 +19,11 @@ class CompanySerializer(serializers.ModelSerializer):
         return attrs
 
 
+class CompanyNameSerializer(serializers.Serializer):
+    name = serializers.CharField(source='company__name')
+    scale = serializers.IntegerField(source='company__scale')
+
+
 class RecruitmentSerializer(serializers.ModelSerializer):
     company_name = serializers.CharField(source='company.name', read_only=True)
     company_desc = serializers.CharField(source='company.description', read_only=True)

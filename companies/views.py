@@ -7,7 +7,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from .models import Company, Recruitment
-from .serializers import CompanySerializer, RecruitmentSerializer
+from .serializers import CompanySerializer, RecruitmentSerializer, CompanyNameSerializer
 
 
 class CompanyViewSet(viewsets.ModelViewSet):
@@ -37,17 +37,17 @@ class RecruitmentViewSet(viewsets.ModelViewSet):
 
 
     # todo 회사 정보 가져오는 action 추가 하기
-    @action(detail=True, methods=['get'])
-    def company_recruitments(self, request, pk=None):
+    @action(detail=True, methods=['get'], url_path='company-details')
+    def company_details(self, request, pk=None):
         obj = self.get_object()
         company = obj.company
-        # select_related와 values_list를 사용하여 관련된 Company 정보 중 id만 가져오기
-        recruitment_ids = (
-            Recruitment.objects
-            .filter(company=company)
-            .select_related('company')
-            .values_list('id', flat=True)
-        )
+        serializer = CompanySerializer(company)
+        return Response(serializer.data)
 
-        # 결과를 JSON 형태로 반환
-        return JsonResponse(list(recruitment_ids), safe=False)
+    @action(detail=False, methods=['get'], url_path='company-namelist')
+    def company_namelist(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        names = queryset.values('company__name', 'company__scale').distinct()
+        serializer = CompanyNameSerializer(names, many=True)
+        return Response(serializer.data)
+
